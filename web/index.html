@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        font-size: 24px;
+      }
+      .card {
+        width: 10rem;
+        height: 100%;
+        background-color: aqua;
+        padding: 1rem;
+        margin: 1rem;
+      }
+      #allContent {
+        display: flex;
+        width: 100%;
+        flex-wrap: wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <form
+      action="http://localhost:3001/add"
+      method="post"
+      enctype="multipart/form-data"
+    >
+      <label for="name">输入你的姓名:</label>
+      <input type="text" id="name" name="name" />
+      <br />
+      <label for="identity">输入你的学号:</label>
+      <input type="text" id="identity" name="identity" />
+      <br />
+      <label name="gender">选择你的性别：</label>
+      <input type="radio" name="gender" id="male" value="male" />👦
+      <input type="radio" name="gender" id="female" value="female" />👧
+      <br />
+
+      <label name="hobby">爱好：</label>
+      <textarea name="hobby" id="hobby" cols="30" rows="10"></textarea>
+
+      <br />
+      <input type="submit" value="提交" id="submit" />
+
+      <button id="getall">查看所有的成员</button>
+      <div id="allContent"></div>
+    </form>
+    <script>
+      const submit = document.querySelector("#submit");
+      const form = document.querySelector("form");
+
+      const getAllbtn = document.querySelector("#getall");
+      getAllbtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        getAll();
+      });
+      
+      function getAll() {
+        fetch("http://localhost:3001/getAll", {
+          method: "GET",
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const allContent = document.querySelector("#allContent");
+            allContent.innerHTML = "";
+            data.map((item) => {
+              const card = document.createElement("div");
+              card.className = "card";
+              card.textContent = `
+                姓名：${item.name}
+                学号：${item.identity}
+                性别：${item.gender === "male" ? "👦" : "👧"}
+                爱好：${item.hobby}
+                `;
+              allContent.append(card);
+            });
+          })
+          .catch((error) => console.error("Error:", error));
+      }
+      getAll();
+    </script>
+  </body>
+</html>
